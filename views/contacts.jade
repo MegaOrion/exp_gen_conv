@@ -1,0 +1,12 @@
+extends layout
+
+block content
+    h1= title
+    form(action='', method='post')
+      label(for='name') Name: 
+        input(type='text', name='name', value=name)
+      label(for='phone') Your number: 
+        input(type='text', name='phone', value=phone)
+      label(for='email') Email pls!!!
+        input(type='text', name='email', value=email)
+      button(type="submit") Send

@@ -1,44 +1,50 @@
-var express = require('express');
-var router = express.Router();
-const Converter = require('../public/javascripts/converter');
-const request = require('request');
-const url = 'https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=3';
-
+const express = require('express');
+const router = express.Router();
+const nodemailer = require('nodemailer');
+let obj = {};
 /* GET home page. */
+router.get('/about', function(req, res, next) {
+  res.render('about', { title: 'About us: '});
+});
+
+router.get('/contacts', function(req, res, next) {
+  res.render('contacts', { title: 'Let your contacts!'});
+});
+
+router.post('/contacts', function (req, res) {  
+  obj.name = req.body.name;
+  obj.phone = req.body.phone;
+  obj.email = req.body.email;
+
+  let mailTransporter = nodemailer.createTransport({ 
+    service: 'gmail', 
+    auth: { 
+        user: 'biryuk3333@gmail.com', 
+        pass: 'repersmerti228'
+    } 
+  }); 
+    
+  let mailDetails = { 
+      from: 'biryuk3333@gmail.com', 
+      to: 'biryuk3333@gmail.com', 
+      subject: 'Test mail contacts', 
+      text: JSON.stringify(obj),
+  }; 
+    
+  mailTransporter.sendMail(mailDetails, function(err, data) { 
+      if(err) { 
+          console.log('Error Occurs'); 
+      } else { 
+          console.log('Email sent successfully'); 
+      } 
+  }); 
+
+  console.log(obj);
+  res.redirect('/contacts');
+});
+
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-})
-    .get('/courses', function(req, res, next) {
-      getCourses().then((body) => {
-        data = JSON.parse(body);
-        baseCurrencyUs = parseFloat(data[2].buy);
-        baseCurrencyRu = parseFloat(data[1].buy);
-        baseCurrencyEu = parseFloat(data[0].buy);
-        let conv = new Converter(baseCurrencyUs, baseCurrencyRu, baseCurrencyEu);
-        res.render('courses', { title: 'Express',
-                                title1: conv.convertUsToUa(1000),
-                                title2: conv.convertUaToUs(1000),
-                                title3: conv.convertRuToUa(1000),
-                                title4: conv.convertUaToRu(1000),
-                                title5: conv.convertEuToUa(1000),
-                                title6: conv.convertUaToEu(1000)
-                              });
-        console.log(conv.convertUsToUa(1000));
-        console.log(conv.convertUaToUs(1000));
-        console.log(conv.convertRuToUa(1000));
-        console.log(conv.convertUaToRu(1000));
-        console.log(conv.convertEuToUa(1000));
-        console.log(conv.convertUaToEu(1000));    
-      })
-    })
+  res.render('index', { title: '^Courses^' });
+});
 
 module.exports = router;
-
-function getCourses() {
-  return new Promise(function (resolve, reject) {
-      request(url, function (err, res, body) {
-          resolve(body);
-      })
-  })
-}
-
