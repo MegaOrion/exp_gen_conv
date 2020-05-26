@@ -20,7 +20,7 @@ router.post('/contacts', function (req, res) {
     service: 'gmail', 
     auth: { 
         user: 'biryuk3333@gmail.com', 
-        pass: 'repersmerti228'
+        pass: ''
     } 
   }); 
     
